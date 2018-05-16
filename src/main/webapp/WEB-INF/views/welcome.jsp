@@ -8,6 +8,6 @@
 </head>
 <body>
 welcome ${name}<br/>
-password ${password}
+Now you can <a href="/list-todos">manage your todo lists.</a>
 </body>
 </html>

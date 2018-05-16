@@ -7,6 +7,7 @@
 <title>Todo List</title>
 </head>
 <body>
+Hi ${name}<br/>
 Your todos are<br/>
 ${todos}
 </body>
