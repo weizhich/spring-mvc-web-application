@@ -4,12 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Todo List</title>
+<title>Todo Page</title>
 </head>
 <body>
-Hi ${name}<br/>
-Your todos are<br/>
-${todos}<br/>
-<a class="button" href="/add-todo">Add</a>	
+<H1> to do </H1>
+<form method="post">
+	<input name="description" type="text"/>
+	<input type="submit" value="Add"/>
+</form>
+	
 </body>
 </html>
