@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -18,11 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@SessionAttributes("name")
 public class TodoController {
 	@Autowired
 	TodoService todoService;
-	private final static String user = "weizhich";
 	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -30,9 +30,19 @@ public class TodoController {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
 	}
 	
+	private String getLoggedInUserName() {
+		Object principal = SecurityContextHolder.getContext()
+				.getAuthentication().getPrincipal();
+
+		if (principal instanceof UserDetails)
+			return ((UserDetails) principal).getUsername();
+
+		return principal.toString();
+	}
+
 	@RequestMapping(value = "/list-todos", method = RequestMethod.GET)
 	public String listTodos(ModelMap model) {
-		model.addAttribute("todos", todoService.retrieveTodos(user));
+		model.addAttribute("todos", todoService.retrieveTodos(getLoggedInUserName()));
 		return "list-todos";
 	}
 	
@@ -64,7 +74,7 @@ public class TodoController {
 		if(result.hasErrors()) {
 			return "todo";
 		}
-		todo.setUser(user);
+		todo.setUser(getLoggedInUserName());
 		todo.setIsDone(false);
 		todoService.updateTodo(todo);
 		return "redirect:list-todos";
@@ -72,7 +82,6 @@ public class TodoController {
 	
 	@RequestMapping(value = "/delete-todo", method = RequestMethod.GET)
 	public String deleteTodo(ModelMap model, @RequestParam Integer id) {
-		//Delete todo
 		todoService.deleteTodo(id);
 		model.clear();
 		return "redirect:list-todos";
